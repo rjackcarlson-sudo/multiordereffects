@@ -67,7 +67,7 @@ const renderGlyphText = (text: string) =>
 const scenes: Record<Phase, Scene> = {
   intro: {
     eyebrow: 'unauthorized arrival',
-    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorImage: '/introductions.jpg.jpg',
     evaluatorAlt: 'The woman narrator smiling with manufactured warmth',
     dialogue:
       "Hey, what are you doing here. You're not supposed to be here until you've 𐌈𐍈𐌄𐌉𐌊𐌂𝔼𝔼. Did you 𐌈𐍈𐌄𐌉𐌊𐌂𝔼𝔼 yet?",
@@ -252,7 +252,7 @@ const scenes: Record<Phase, Scene> = {
   },
   ai_accept: {
     eyebrow: 'compliance complete',
-    evaluatorImage: '/happydemon.jpg.jpg',
+    evaluatorImage: '/happytemptress.jpg.jpg',
     evaluatorAlt: 'The woman narrator delighted by total compliance',
     companyName: 'AIs that Matter',
     companyLogo: '/AIsthatmatter-logo.png.jpg',
