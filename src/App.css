@@ -23,7 +23,7 @@ input {
   display: grid;
   place-items: center;
   overflow: hidden;
-  padding: clamp(12px, 2.6vw, 34px);
+  padding: clamp(8px, 1.4vw, 18px);
   color: #fff;
   background:
     radial-gradient(circle at 50% 18%, rgba(118, 23, 205, 0.28), transparent 40%),
@@ -45,9 +45,9 @@ input {
 .viewscreen {
   position: relative;
   z-index: 1;
-  width: min(1160px, 100%);
-  aspect-ratio: 16 / 9;
-  min-height: 660px;
+  width: min(1500px, 94vw);
+  height: min(920px, 91svh);
+  min-height: min(760px, calc(100svh - 24px));
   overflow: hidden;
   border: 1px solid rgba(212, 136, 255, 0.46);
   border-radius: clamp(20px, 4vw, 46px);
@@ -62,7 +62,7 @@ input {
 .viewscreen::after {
   content: '';
   position: absolute;
-  inset: clamp(16px, 4vw, 54px);
+  inset: clamp(12px, 2.6vw, 38px);
   z-index: 2;
   pointer-events: none;
   border-radius: clamp(12px, 2.4vw, 28px);
@@ -203,10 +203,10 @@ input {
 
 .viewscreen-content {
   position: absolute;
-  inset: clamp(26px, 5vw, 70px);
+  inset: clamp(18px, 3.2vw, 48px);
   z-index: 3;
   display: grid;
-  grid-template-rows: minmax(0, 0.9fr) auto auto;
+  grid-template-rows: minmax(0, 0.8fr) auto auto;
   align-items: center;
   justify-items: center;
   gap: clamp(14px, 2.3vw, 26px);
@@ -216,6 +216,11 @@ input {
 
 .viewscreen-content-mundane {
   grid-template-rows: auto minmax(0, 1fr);
+}
+
+.viewscreen-ending .viewscreen-content {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(10px, 1.6vw, 18px);
 }
 
 .evaluator {
@@ -256,8 +261,8 @@ input {
   position: relative;
   z-index: 1;
   display: block;
-  max-width: min(74vw, 430px);
-  max-height: min(39svh, 330px);
+  max-width: min(74vw, 480px);
+  max-height: min(38svh, 360px);
   object-fit: contain;
   border: 1px solid rgba(209, 128, 255, 0.42);
   border-radius: 24px;
@@ -296,7 +301,7 @@ input {
 }
 
 .viewscreen-ending .evaluator-image {
-  max-height: min(28svh, 240px);
+  max-height: min(24svh, 220px);
 }
 
 .viewscreen-plain .evaluator::after,
@@ -312,7 +317,7 @@ input {
 }
 
 .scene-copy {
-  width: min(860px, 100%);
+  width: min(1080px, 100%);
   padding: clamp(14px, 2.1vw, 24px);
   border: 1px solid rgba(111, 239, 255, 0.26);
   border-radius: 24px;
@@ -332,12 +337,13 @@ input {
 }
 
 .viewscreen-ending .scene-copy {
-  max-height: min(320px, 40svh);
+  max-height: min(540px, 54svh);
   overflow: auto;
 }
 
 .viewscreen-ending .dialogue {
-  font-size: clamp(0.92rem, 1.55vw, 1.12rem);
+  font-size: clamp(1rem, 1.42vw, 1.18rem);
+  line-height: 1.5;
 }
 
 .eyebrow {
