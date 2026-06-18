@@ -4,6 +4,7 @@ import './App.css';
 const FAIL_BLACKOUT_DELAY_MS = 1700;
 
 type Phase =
+  | 'enter'
   | 'intro'
   | 'liar_response'
   | 'survey_invitation'
@@ -23,6 +24,7 @@ type Phase =
   | 'ai_accept'
   | 'enlightenment_ending'
   | 'doomer_ending'
+  | 'neutral_ending'
   | 'minigame'
   | 'kicked_out'
   | 'alien_fail';
@@ -34,6 +36,7 @@ type Choice = {
   next: Phase;
   tone?: ChoiceTone;
   description?: string;
+  signal?: SurveySignal;
 };
 
 type Scene = {
@@ -45,8 +48,10 @@ type Scene = {
   companyName?: string;
   companyLogo?: string;
   choices: Choice[];
-  mood?: 'kind' | 'liar' | 'survey' | 'angry' | 'flirt' | 'ending' | 'plain' | 'fail';
+  mood?: 'kind' | 'liar' | 'survey' | 'angry' | 'flirt' | 'ending' | 'plain' | 'neutral' | 'fail';
 };
+
+type SurveySignal = 'reject' | 'comply' | 'lukewarm';
 
 const glyphPattern = /([𐌀-𐍈𝔄-𝔜𝔞-𝔶]{2,})/gu;
 const glyphTestPattern = /^[𐌀-𐍈𝔄-𝔜𝔞-𝔶]{2,}$/u;
@@ -64,7 +69,7 @@ const renderGlyphText = (text: string) =>
     ),
   );
 
-const scenes: Record<Phase, Scene> = {
+const scenes: Record<Exclude<Phase, 'enter'>, Scene> = {
   intro: {
     eyebrow: 'unauthorized arrival',
     evaluatorImage: '/introductions.jpg.jpg',
@@ -106,11 +111,35 @@ const scenes: Record<Phase, Scene> = {
     dialogue: 'First, something artisanal. Be honest in a way I can use.',
     question: 'How likely are you to shop at this company for your battery acid needs?',
     choices: [
-      { label: '1', next: 'cobac_cruel', tone: 'rose', description: 'No, and I feel good about it' },
-      { label: '2', next: 'cobac_boring', tone: 'broken', description: 'Almost an opinion' },
-      { label: '3', next: 'cobac_boring', tone: 'broken', description: 'A shrug wearing shoes' },
+      {
+        label: '1',
+        next: 'cobac_cruel',
+        tone: 'rose',
+        description: 'No, and I feel good about it',
+        signal: 'reject',
+      },
+      {
+        label: '2',
+        next: 'cobac_boring',
+        tone: 'broken',
+        description: 'Almost an opinion',
+        signal: 'lukewarm',
+      },
+      {
+        label: '3',
+        next: 'cobac_boring',
+        tone: 'broken',
+        description: 'A shrug wearing shoes',
+        signal: 'lukewarm',
+      },
       { label: alienGlyph, next: 'alien_fail', tone: 'acid', description: translationGlyph },
-      { label: '5² (25)', next: 'cobac_enthusiastic', tone: 'cyan', description: 'Extremely acid-positive' },
+      {
+        label: '5² (25)',
+        next: 'cobac_enthusiastic',
+        tone: 'cyan',
+        description: 'Extremely acid-positive',
+        signal: 'comply',
+      },
     ],
     mood: 'survey',
   },
@@ -165,9 +194,9 @@ const scenes: Record<Phase, Scene> = {
     dialogue: 'This one is gentle. Family-friendly. The sulfur is sustainable, which means you can stop thinking.',
     question: 'How likely are you to shop at Sulfur Farms Sustainable Kids Snacks?',
     choices: [
-      { label: '1', next: 'sulfur_reject', tone: 'rose', description: 'Reject the snack' },
-      { label: '2', next: 'sulfur_broken', tone: 'broken', description: 'Unavailable' },
-      { label: '3', next: 'sulfur_accept', tone: 'cyan', description: 'Accept the snack' },
+      { label: '1', next: 'sulfur_reject', tone: 'rose', description: 'Reject the snack', signal: 'reject' },
+      { label: '2', next: 'sulfur_broken', tone: 'broken', description: 'Unavailable', signal: 'lukewarm' },
+      { label: '3', next: 'sulfur_accept', tone: 'cyan', description: 'Accept the snack', signal: 'comply' },
     ],
     mood: 'survey',
   },
@@ -223,9 +252,9 @@ const scenes: Record<Phase, Scene> = {
     dialogue: 'Last one. It cares about you in the way a steering wheel cares about the road.',
     question: 'How likely are you to shop for the LLM that steers human behavior?',
     choices: [
-      { label: '1', next: 'ai_reject', tone: 'rose', description: 'Reject the handlers' },
-      { label: '2', next: 'ai_broken', tone: 'broken', description: 'Unavailable again' },
-      { label: '3', next: 'ai_accept', tone: 'cyan', description: 'Accept the handlers' },
+      { label: '1', next: 'ai_reject', tone: 'rose', description: 'Reject the handlers', signal: 'reject' },
+      { label: '2', next: 'ai_broken', tone: 'broken', description: 'Unavailable again', signal: 'lukewarm' },
+      { label: '3', next: 'ai_accept', tone: 'cyan', description: 'Accept the handlers', signal: 'comply' },
     ],
     mood: 'survey',
   },
@@ -266,7 +295,7 @@ const scenes: Record<Phase, Scene> = {
     evaluatorAlt: 'The woman narrator performing a sarcastic slow clap as the screen fades',
     dialogue:
       `Listen, I've tried my best to show you the way. You simply refuse to ${alienGlyph}. I HAD A LOT OF FRACTAL RIDING ON THIS.....Ok, keep your composure. Fine, I lose. But you don't win unless you keep going and keep trying. I am not the agent of entropy you may think I am. I am a test and you passed. Your fractal object is with you now. Oh what you don't see it? (fake boo hoo face). Is someone limited to only 3 dimensions? Poor sweet baby human. Well, it is with you regardless of your ability or lack thereof to perceive it.`,
-    choices: [{ label: 'Keep going through the fade', next: 'intro', tone: 'violet' }],
+    choices: [],
     mood: 'ending',
   },
   doomer_ending: {
@@ -277,6 +306,16 @@ const scenes: Record<Phase, Scene> = {
       "Aren't you proud of yourself? Such a good little boy or girl or whatever... You are a sheep and you were led to slaughter...",
     choices: [{ label: 'Begin data entry', next: 'minigame', tone: 'broken' }],
     mood: 'plain',
+  },
+  neutral_ending: {
+    eyebrow: 'neutral path / gray static',
+    evaluatorImage: '/disappointed.jpg.jpg',
+    evaluatorAlt: 'The woman narrator disappointed and detached',
+    dialogue:
+      'You just... couldn’t choose, could you? How boring. How safe. You get nothing. No fractal object. No revelation. Just... this.',
+    question: 'The path of neutrality leads nowhere.',
+    choices: [],
+    mood: 'neutral',
   },
   minigame: {
     eyebrow: 'mundane data-entry loop',
@@ -305,11 +344,26 @@ const scenes: Record<Phase, Scene> = {
 };
 
 const failPhases = new Set<Phase>(['kicked_out', 'alien_fail']);
+const endingPhases = new Set<Phase>(['enlightenment_ending', 'doomer_ending', 'neutral_ending']);
+
+const resolveEnding = (signals: SurveySignal[], intendedEnding: Phase): Phase => {
+  const rejectCount = signals.filter((signal) => signal === 'reject').length;
+  const complyCount = signals.filter((signal) => signal === 'comply').length;
+  const lukewarmCount = signals.filter((signal) => signal === 'lukewarm').length;
+
+  if ((rejectCount > 0 && complyCount > 0) || lukewarmCount >= 2 || lukewarmCount > rejectCount + complyCount) {
+    return 'neutral_ending';
+  }
+
+  return intendedEnding;
+};
 
 export default function App() {
-  const [phase, setPhase] = useState<Phase>('intro');
+  const [phase, setPhase] = useState<Phase>('enter');
   const [blackout, setBlackout] = useState(false);
   const [taskCount, setTaskCount] = useState(0);
+  const [veilOpen, setVeilOpen] = useState(false);
+  const [surveySignals, setSurveySignals] = useState<SurveySignal[]>([]);
 
   const isFailState = failPhases.has(phase);
 
@@ -322,27 +376,54 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [isFailState]);
 
-  const goToPhase = (nextPhase: Phase) => {
-    setPhase(nextPhase);
+  const activateChamber = () => {
+    setVeilOpen(true);
+    window.setTimeout(() => setPhase('intro'), 850);
+  };
+
+  const goToPhase = (nextPhase: Phase, signal?: SurveySignal) => {
+    const nextSignals = signal ? [...surveySignals, signal] : surveySignals;
+    const resolvedPhase = endingPhases.has(nextPhase) ? resolveEnding(nextSignals, nextPhase) : nextPhase;
+
+    if (signal) {
+      setSurveySignals(nextSignals);
+    }
+
+    setPhase(resolvedPhase);
     setBlackout(false);
 
-    if (nextPhase === 'minigame') {
+    if (resolvedPhase === 'minigame') {
       setTaskCount(0);
     }
   };
 
-  const reset = () => {
-    setPhase('intro');
-    setBlackout(false);
-    setTaskCount(0);
-  };
-
   if (blackout && isFailState) {
+    return <main className="blackout-screen" aria-label="Black screen" />;
+  }
+
+  if (phase === 'enter') {
     return (
-      <main className="blackout-screen">
-        <button className="blackout-reset" onClick={reset}>
-          Reset Chamber
-        </button>
+      <main className="esoteric-page page-enter">
+        <video autoPlay loop muted playsInline className="ambient-video">
+          <source src="/ambient-loop.mp4.mp4" type="video/mp4" />
+        </video>
+
+        <section
+          className={`viewscreen viewscreen-enter ${veilOpen ? 'veil-open' : ''}`}
+          aria-label="Dormant esoteric viewscreen"
+        >
+          <img src="/turning.jpg.jpg" alt="" className="turning-fractal" aria-hidden="true" />
+          <img src="/fractal-frame.png" alt="" className="fractal-frame" aria-hidden="true" />
+
+          <div className="veil-cover">
+            <p className="veil-glyph" aria-hidden="true">
+              {alienGlyph}
+            </p>
+            <button className="enter-button" onClick={activateChamber} disabled={veilOpen}>
+              Lift the Veil
+            </button>
+          </div>
+        </section>
       </main>
     );
   }
@@ -415,7 +496,7 @@ export default function App() {
               {scene.choices.map((choice) => (
                 <button
                   key={`${phase}-${choice.label}`}
-                  onClick={() => goToPhase(choice.next)}
+                  onClick={() => goToPhase(choice.next, choice.signal)}
                   className={`choice-button ${choice.tone ?? 'cyan'}`}
                 >
                   <span className="choice-label">{renderGlyphText(choice.label)}</span>
@@ -425,11 +506,6 @@ export default function App() {
                 </button>
               ))}
 
-              {phase !== 'intro' && !isFailState && (
-                <button onClick={reset} className="reset-button">
-                  Reset Chamber
-                </button>
-              )}
             </div>
           )}
         </div>
