@@ -265,8 +265,8 @@ const scenes: Record<Phase, Scene> = {
     evaluatorImage: '/Sarcasticclap.jpg.jpg',
     evaluatorAlt: 'The woman narrator performing a sarcastic slow clap as the screen fades',
     dialogue:
-      `Listen, I've tried my best to show you the way. You simply refuse to ${alienGlyph}. I HAD A LOT OF FRACTAL RIDING ON THIS..... Fine, I lose. But you don't win unless you keep going... Your fractal object is with you now... Poor sweet baby human.`,
-    choices: [{ label: 'Let the slow clap fade', next: 'intro', tone: 'violet' }],
+      `Listen, I've tried my best to show you the way. You simply refuse to ${alienGlyph}. I HAD A LOT OF FRACTAL RIDING ON THIS.....Ok, keep your composure. Fine, I lose. But you don't win unless you keep going and keep trying. I am not the agent of entropy you may think I am. I am a test and you passed. Your fractal object is with you now. Oh what you don't see it? (fake boo hoo face). Is someone limited to only 3 dimensions? Poor sweet baby human. Well, it is with you regardless of your ability or lack thereof to perceive it.`,
+    choices: [{ label: 'Keep going through the fade', next: 'intro', tone: 'violet' }],
     mood: 'ending',
   },
   doomer_ending: {

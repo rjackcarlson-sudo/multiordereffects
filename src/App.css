@@ -170,6 +170,17 @@ input {
   animation-duration: 10s, 2s;
 }
 
+.page-ending::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: #000;
+  opacity: 0;
+  animation: ending-fade-out 18s ease-in forwards;
+}
+
 .viewscreen-plain {
   border-color: rgba(180, 180, 180, 0.4);
   background: rgba(10, 10, 10, 0.94);
@@ -284,6 +295,10 @@ input {
     angry-flicker 850ms steps(2, end) infinite;
 }
 
+.viewscreen-ending .evaluator-image {
+  max-height: min(28svh, 240px);
+}
+
 .viewscreen-plain .evaluator::after,
 .viewscreen-plain .vein-glow {
   display: none;
@@ -314,6 +329,15 @@ input {
   background: rgba(18, 18, 18, 0.9);
   box-shadow: none;
   text-shadow: none;
+}
+
+.viewscreen-ending .scene-copy {
+  max-height: min(320px, 40svh);
+  overflow: auto;
+}
+
+.viewscreen-ending .dialogue {
+  font-size: clamp(0.92rem, 1.55vw, 1.12rem);
 }
 
 .eyebrow {
@@ -648,6 +672,16 @@ input {
   to {
     filter: hue-rotate(34deg) brightness(1.28);
     transform: translateY(-1px);
+  }
+}
+
+@keyframes ending-fade-out {
+  0%,
+  68% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.92;
   }
 }
 
