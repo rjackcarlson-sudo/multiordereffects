@@ -92,7 +92,7 @@ const scenes: Record<Exclude<Phase, 'enter'>, Scene> = {
   },
   survey_invitation: {
     eyebrow: 'reward disclosure',
-    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorImage: '/introductions.jpg.jpg',
     evaluatorAlt: 'The woman narrator offering a survey with synthetic sweetness',
     dialogue:
       "Would you like to conduct a survey, your reward is a fractal object? It's already warm. I think it already likes you.",
@@ -104,7 +104,7 @@ const scenes: Record<Exclude<Phase, 'enter'>, Scene> = {
   },
   cobac_question: {
     eyebrow: 'survey 01 / organic corrosion',
-    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorImage: '/introductions.jpg.jpg',
     evaluatorAlt: 'The woman narrator waiting sweetly inside the viewscreen',
     companyName: 'Certified Organic Battery Acid Company',
     companyLogo: '/COBAC-logo.jpg.jpg',
@@ -176,7 +176,7 @@ const scenes: Record<Exclude<Phase, 'enter'>, Scene> = {
   },
   sulfur_intro: {
     eyebrow: 'transition / sulfur offering',
-    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorImage: '/introductions.jpg.jpg',
     evaluatorAlt: 'The woman narrator introducing Sulfur Farms with false tenderness',
     companyName: 'Sulfur Farms Sustainable Kids Snacks',
     companyLogo: '/sulferfarms-logo.png.png',
@@ -187,7 +187,7 @@ const scenes: Record<Exclude<Phase, 'enter'>, Scene> = {
   },
   sulfur_question: {
     eyebrow: 'survey 02 / snackable virtue',
-    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorImage: '/introductions.jpg.jpg',
     evaluatorAlt: 'The woman narrator warmly presenting the next company',
     companyName: 'Sulfur Farms Sustainable Kids Snacks',
     companyLogo: '/sulferfarms-logo.png.png',
@@ -234,7 +234,7 @@ const scenes: Record<Exclude<Phase, 'enter'>, Scene> = {
   },
   ai_intro: {
     eyebrow: 'transition / handler offering',
-    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorImage: '/introductions.jpg.jpg',
     evaluatorAlt: 'The woman narrator becoming still before the final survey',
     companyName: 'AIs that Matter',
     companyLogo: '/AIsthatmatter-logo.png.jpg',
@@ -245,7 +245,7 @@ const scenes: Record<Exclude<Phase, 'enter'>, Scene> = {
   },
   ai_question: {
     eyebrow: 'survey 03 / guided behavior',
-    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorImage: '/introductions.jpg.jpg',
     evaluatorAlt: 'The woman narrator presenting the final company with fake gentleness',
     companyName: 'AIs that Matter',
     companyLogo: '/AIsthatmatter-logo.png.jpg',
