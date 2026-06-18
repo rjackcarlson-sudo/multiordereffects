@@ -109,20 +109,10 @@ const scenes: Record<Exclude<Phase, 'kicked_out'>, Scene> = {
 
 export default function App() {
   const [phase, setPhase] = useState<Phase>('intro');
-  const [fractalsHot, setFractalsHot] = useState(false);
   const [blackout, setBlackout] = useState(false);
 
   useEffect(() => {
-    if (phase !== 'intro') {
-      const timer = setTimeout(() => setFractalsHot(true), 300);
-      return () => clearTimeout(timer);
-    }
-    setFractalsHot(false);
-  }, [phase]);
-
-  useEffect(() => {
     if (phase !== 'kicked_out') {
-      setBlackout(false);
       return;
     }
 
@@ -130,9 +120,13 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [phase]);
 
+  const goToPhase = (nextPhase: Phase) => {
+    setPhase(nextPhase);
+    setBlackout(false);
+  };
+
   const reset = () => {
     setPhase('intro');
-    setFractalsHot(false);
     setBlackout(false);
   };
 
@@ -168,7 +162,7 @@ export default function App() {
       </video>
 
       <section
-        className={`viewscreen ${fractalsHot ? 'viewscreen-hot' : ''}`}
+        className={`viewscreen ${phase !== 'intro' ? 'viewscreen-hot' : ''}`}
         aria-label="Esoteric viewscreen"
       >
         <img
@@ -193,7 +187,7 @@ export default function App() {
             {scene.choices.map((choice) => (
               <button
                 key={`${phase}-${choice.label}`}
-                onClick={() => setPhase(choice.next)}
+                onClick={() => goToPhase(choice.next)}
                 className={`choice-button ${choice.tone ?? 'cyan'}`}
               >
                 {choice.logo && (
