@@ -349,7 +349,7 @@ export default function App() {
                 <button className="submit-record" onClick={() => setTaskCount((count) => count + 1)}>
                   Submit record
                 </button>
-                <p className="score">wow good job +{taskCount}</p>
+                <p className="score">wow good job +1</p>
               </div>
             )}
           </section>
