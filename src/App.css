@@ -26,9 +26,10 @@ input {
   padding: clamp(12px, 2.6vw, 34px);
   color: #fff;
   background:
-    radial-gradient(circle at 50% 22%, rgba(154, 42, 255, 0.28), transparent 42%),
-    radial-gradient(circle at 16% 85%, rgba(17, 210, 255, 0.16), transparent 34%),
-    linear-gradient(135deg, #05000b 0%, #000 58%, #12000f 100%);
+    radial-gradient(circle at 50% 18%, rgba(118, 23, 205, 0.28), transparent 40%),
+    radial-gradient(circle at 16% 85%, rgba(17, 210, 255, 0.12), transparent 34%),
+    radial-gradient(circle at 86% 12%, rgba(255, 34, 139, 0.12), transparent 30%),
+    linear-gradient(135deg, #020006 0%, #000 56%, #0b000b 100%);
 }
 
 .ambient-video {
@@ -37,8 +38,8 @@ input {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.34;
-  filter: saturate(1.25) contrast(1.05);
+  opacity: 0.28;
+  filter: saturate(1.35) contrast(1.08) brightness(0.78);
 }
 
 .viewscreen {
@@ -52,9 +53,9 @@ input {
   border-radius: clamp(20px, 4vw, 46px);
   background: rgba(5, 0, 12, 0.86);
   box-shadow:
-    0 0 30px rgba(189, 54, 255, 0.44),
+    0 0 42px rgba(189, 54, 255, 0.58),
     0 34px 92px rgba(0, 0, 0, 0.82),
-    inset 0 0 60px rgba(85, 255, 245, 0.1);
+    inset 0 0 74px rgba(85, 255, 245, 0.13);
 }
 
 .viewscreen::before,
@@ -70,8 +71,9 @@ input {
 .viewscreen::before {
   border: 1px solid rgba(111, 239, 255, 0.28);
   box-shadow:
-    inset 0 0 34px rgba(111, 239, 255, 0.16),
-    0 0 24px rgba(189, 54, 255, 0.18);
+    inset 0 0 42px rgba(111, 239, 255, 0.18),
+    0 0 34px rgba(189, 54, 255, 0.28);
+  animation: frame-breathe 5.8s ease-in-out infinite;
 }
 
 .viewscreen::after {
@@ -93,10 +95,14 @@ input {
 
 .turning-fractal {
   z-index: 0;
-  opacity: 0.38;
+  --fractal-min: 0.42;
+  --fractal-max: 0.76;
+  opacity: 0.48;
   filter: saturate(1.35) brightness(0.75) hue-rotate(288deg);
   transform: scale(1.14);
-  animation: slow-spin 34s linear infinite;
+  animation:
+    slow-spin 28s linear infinite,
+    fractal-pulse 6.5s ease-in-out infinite;
 }
 
 .fractal-frame {
@@ -113,22 +119,55 @@ input {
 .viewscreen-survey .fractal-frame,
 .viewscreen-liar .fractal-frame,
 .viewscreen-flirt .fractal-frame {
-  opacity: 0.92;
-  filter: saturate(1.48) brightness(1.08) hue-rotate(8deg);
-  transform: scale(1.055);
+  opacity: 0.96;
+  filter: saturate(1.62) brightness(1.12) hue-rotate(8deg);
+  transform: scale(1.07);
+}
+
+.viewscreen-liar .turning-fractal,
+.viewscreen-survey .turning-fractal {
+  --fractal-min: 0.5;
+  --fractal-max: 0.82;
+  opacity: 0.58;
+  animation-duration: 22s, 4.8s;
+}
+
+.viewscreen-flirt .turning-fractal {
+  --fractal-min: 0.58;
+  --fractal-max: 0.92;
+  opacity: 0.68;
+  filter: saturate(1.9) brightness(0.92) hue-rotate(318deg);
+  animation-duration: 18s, 3.8s;
 }
 
 .viewscreen-angry .fractal-frame,
 .viewscreen-fail .fractal-frame {
-  opacity: 0.96;
-  filter: saturate(1.8) brightness(1.04) hue-rotate(326deg);
-  transform: scale(1.075);
+  opacity: 1;
+  filter: saturate(2) brightness(1.12) hue-rotate(326deg);
+  transform: scale(1.095);
+}
+
+.viewscreen-angry .turning-fractal,
+.viewscreen-fail .turning-fractal {
+  --fractal-min: 0.62;
+  --fractal-max: 1;
+  opacity: 0.78;
+  filter: saturate(2.25) brightness(0.98) hue-rotate(342deg);
+  animation-duration: 12s, 1.5s;
 }
 
 .viewscreen-ending .fractal-frame {
-  opacity: 0.98;
-  filter: saturate(1.75) brightness(1.18) hue-rotate(36deg);
-  transform: scale(1.08);
+  opacity: 1;
+  filter: saturate(2.1) brightness(1.25) hue-rotate(36deg);
+  transform: scale(1.1);
+}
+
+.viewscreen-ending .turning-fractal {
+  --fractal-min: 0.66;
+  --fractal-max: 1;
+  opacity: 0.82;
+  filter: saturate(2.15) brightness(1.02) hue-rotate(26deg);
+  animation-duration: 10s, 2s;
 }
 
 .viewscreen-plain {
@@ -141,6 +180,8 @@ input {
 
 .page-plain .ambient-video,
 .viewscreen-plain .turning-fractal {
+  --fractal-min: 0.1;
+  --fractal-max: 0.22;
   opacity: 0.14;
 }
 
@@ -159,6 +200,7 @@ input {
   justify-items: center;
   gap: clamp(14px, 2.3vw, 26px);
   text-align: center;
+  animation: slide-arrival 520ms ease both;
 }
 
 .viewscreen-content-mundane {
@@ -211,11 +253,35 @@ input {
   box-shadow:
     0 0 28px rgba(75, 255, 244, 0.24),
     0 18px 60px rgba(0, 0, 0, 0.68);
+  transition:
+    border-color 420ms ease,
+    border-radius 420ms ease,
+    filter 420ms ease,
+    transform 420ms ease,
+    box-shadow 420ms ease;
+  animation: woman-arrival 520ms ease both;
+}
+
+.viewscreen-kind .evaluator-image,
+.viewscreen-survey .evaluator-image {
+  filter: saturate(1.06) brightness(1.02);
+}
+
+.viewscreen-liar .evaluator-image,
+.viewscreen-flirt .evaluator-image {
+  transform: translateY(-3px) scale(1.025);
+  filter: saturate(1.18) brightness(1.06);
+  box-shadow:
+    0 0 34px rgba(255, 82, 205, 0.3),
+    0 20px 68px rgba(0, 0, 0, 0.7);
 }
 
 .viewscreen-angry .evaluator-image,
 .viewscreen-fail .evaluator-image {
-  animation: angry-flicker 850ms steps(2, end) infinite;
+  border-color: rgba(255, 94, 139, 0.54);
+  animation:
+    woman-arrival 520ms ease both,
+    angry-flicker 850ms steps(2, end) infinite;
 }
 
 .viewscreen-plain .evaluator::after,
@@ -265,25 +331,58 @@ input {
 }
 
 .company-card {
-  display: inline-flex;
+  display: grid;
+  justify-items: center;
   align-items: center;
-  gap: 12px;
-  max-width: 100%;
-  margin-bottom: 14px;
-  padding: 8px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  gap: 14px;
+  width: min(460px, 100%);
+  margin: 0 auto 18px;
+  padding: 18px clamp(18px, 3vw, 28px);
+  border: 1px solid rgba(111, 239, 255, 0.36);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(111, 239, 255, 0.18), transparent 62%),
+    rgba(255, 255, 255, 0.08);
   color: #fff;
   font-weight: 800;
+  box-shadow:
+    0 0 28px rgba(111, 239, 255, 0.18),
+    inset 0 0 28px rgba(209, 128, 255, 0.08);
 }
 
 .company-logo {
-  width: 42px;
-  height: 42px;
+  width: clamp(110px, 18vw, 170px);
+  height: clamp(110px, 18vw, 170px);
   object-fit: contain;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.92);
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(216, 243, 255, 0.86));
+  box-shadow:
+    0 0 24px rgba(111, 239, 255, 0.36),
+    0 0 46px rgba(189, 54, 255, 0.18);
+}
+
+.company-card span {
+  font-size: clamp(1rem, 2vw, 1.28rem);
+  line-height: 1.15;
+}
+
+.alien-glyph {
+  display: inline-block;
+  color: #dffcff;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-shadow:
+    0 0 7px rgba(111, 239, 255, 0.95),
+    0 0 18px rgba(209, 128, 255, 0.72),
+    0 0 32px rgba(190, 255, 56, 0.28);
+  animation: glyph-shimmer 1.85s ease-in-out infinite alternate;
+}
+
+.choice-button.acid .alien-glyph {
+  font-size: 1.22em;
 }
 
 .dialogue,
@@ -517,6 +616,61 @@ input {
   }
 }
 
+@keyframes fractal-pulse {
+  0%,
+  100% {
+    opacity: var(--fractal-min, 0.42);
+  }
+  50% {
+    opacity: var(--fractal-max, 0.76);
+  }
+}
+
+@keyframes frame-breathe {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 34px rgba(111, 239, 255, 0.16),
+      0 0 24px rgba(189, 54, 255, 0.18);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 58px rgba(111, 239, 255, 0.28),
+      0 0 44px rgba(189, 54, 255, 0.38);
+  }
+}
+
+@keyframes glyph-shimmer {
+  from {
+    filter: hue-rotate(0deg) brightness(1);
+    transform: translateY(0);
+  }
+  to {
+    filter: hue-rotate(34deg) brightness(1.28);
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes slide-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes woman-arrival {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes hair-drift {
   from {
     transform: translate3d(-10px, -3px, 0) skewX(-4deg);
@@ -587,6 +741,12 @@ input {
   }
 
   .company-card {
-    border-radius: 16px;
+    border-radius: 18px;
+    padding: 14px;
+  }
+
+  .company-logo {
+    width: 96px;
+    height: 96px;
   }
 }

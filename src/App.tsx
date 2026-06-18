@@ -6,14 +6,17 @@ const FAIL_BLACKOUT_DELAY_MS = 1700;
 type Phase =
   | 'intro'
   | 'liar_response'
+  | 'survey_invitation'
   | 'cobac_question'
   | 'cobac_cruel'
   | 'cobac_boring'
   | 'cobac_enthusiastic'
+  | 'sulfur_intro'
   | 'sulfur_question'
   | 'sulfur_reject'
   | 'sulfur_broken'
   | 'sulfur_accept'
+  | 'ai_intro'
   | 'ai_question'
   | 'ai_reject'
   | 'ai_broken'
@@ -45,6 +48,22 @@ type Scene = {
   mood?: 'kind' | 'liar' | 'survey' | 'angry' | 'flirt' | 'ending' | 'plain' | 'fail';
 };
 
+const glyphPattern = /([𐌀-𐍈𝔄-𝔜𝔞-𝔶]{2,})/gu;
+const glyphTestPattern = /^[𐌀-𐍈𝔄-𝔜𝔞-𝔶]{2,}$/u;
+const alienGlyph = '𐌈𐍈𐌄𐌉𐌊𐌂𝔼';
+const translationGlyph = '𐌕𐍂𐌀𐌍𐍃𐌋𐌄𐌉𐌊𐌂𝔼';
+
+const renderGlyphText = (text: string) =>
+  text.split(glyphPattern).map((part, index) =>
+    glyphTestPattern.test(part) ? (
+      <span className="alien-glyph" key={`${part}-${index}`}>
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+
 const scenes: Record<Phase, Scene> = {
   intro: {
     eyebrow: 'unauthorized arrival',
@@ -63,8 +82,20 @@ const scenes: Record<Phase, Scene> = {
     evaluatorImage: '/smug.jpg.jpg',
     evaluatorAlt: 'The woman narrator giving a warm but false approving smile',
     dialogue: "You're a liar, you're lucky I like liars.",
-    choices: [{ label: 'Proceed to survey', next: 'cobac_question', tone: 'violet' }],
+    choices: [{ label: 'Continue', next: 'survey_invitation', tone: 'violet' }],
     mood: 'liar',
+  },
+  survey_invitation: {
+    eyebrow: 'reward disclosure',
+    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorAlt: 'The woman narrator offering a survey with synthetic sweetness',
+    dialogue:
+      "Would you like to conduct a survey, your reward is a fractal object? It's already warm. I think it already likes you.",
+    choices: [
+      { label: 'Yes, conduct the survey', next: 'cobac_question', tone: 'cyan' },
+      { label: 'No, keep the object', next: 'kicked_out', tone: 'rose' },
+    ],
+    mood: 'kind',
   },
   cobac_question: {
     eyebrow: 'survey 01 / organic corrosion',
@@ -78,7 +109,7 @@ const scenes: Record<Phase, Scene> = {
       { label: '1', next: 'cobac_cruel', tone: 'rose', description: 'No, and I feel good about it' },
       { label: '2', next: 'cobac_boring', tone: 'broken', description: 'Almost an opinion' },
       { label: '3', next: 'cobac_boring', tone: 'broken', description: 'A shrug wearing shoes' },
-      { label: '𐌈', next: 'alien_fail', tone: 'acid', description: 'Translation error' },
+      { label: alienGlyph, next: 'alien_fail', tone: 'acid', description: translationGlyph },
       { label: '5² (25)', next: 'cobac_enthusiastic', tone: 'cyan', description: 'Extremely acid-positive' },
     ],
     mood: 'survey',
@@ -90,8 +121,8 @@ const scenes: Record<Phase, Scene> = {
     companyName: 'Certified Organic Battery Acid Company',
     companyLogo: '/COBAC-logo.jpg.jpg',
     dialogue:
-      'The founder of this company only sources the finest organic battery acid. He even stopped testing the product on translation error. You are a cruel one. I like that. Let’s try another company that may be more your speed.',
-    choices: [{ label: 'Show me the next company', next: 'sulfur_question', tone: 'violet' }],
+      `The founder of this company only sources the finest organic battery acid. He even stopped testing the product on ${translationGlyph}. You are a cruel one. I like that. Let’s try another company that may be more your speed.`,
+    choices: [{ label: 'Show me the next company', next: 'sulfur_intro', tone: 'violet' }],
     mood: 'angry',
   },
   cobac_boring: {
@@ -111,8 +142,19 @@ const scenes: Record<Phase, Scene> = {
     companyName: 'Certified Organic Battery Acid Company',
     companyLogo: '/COBAC-logo.jpg.jpg',
     dialogue: 'I love that you love acid so much. Let me show you something else you might like.',
-    choices: [{ label: 'Yes, show me', next: 'sulfur_question', tone: 'cyan' }],
+    choices: [{ label: 'Yes, show me', next: 'sulfur_intro', tone: 'cyan' }],
     mood: 'flirt',
+  },
+  sulfur_intro: {
+    eyebrow: 'transition / sulfur offering',
+    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorAlt: 'The woman narrator introducing Sulfur Farms with false tenderness',
+    companyName: 'Sulfur Farms Sustainable Kids Snacks',
+    companyLogo: '/sulferfarms-logo.png.png',
+    dialogue:
+      'Wonderful. The next company is smaller, softer, and much easier to swallow if you let me hold your jaw.',
+    choices: [{ label: 'Open the next survey', next: 'sulfur_question', tone: 'violet' }],
+    mood: 'survey',
   },
   sulfur_question: {
     eyebrow: 'survey 02 / snackable virtue',
@@ -137,7 +179,7 @@ const scenes: Record<Phase, Scene> = {
     companyLogo: '/sulferfarms-logo.png.png',
     dialogue:
       "Oh, I see. So you don't like when children are happy and FAT. That's....too bad. ... You'll love the next one.",
-    choices: [{ label: 'Continue', next: 'ai_question', tone: 'violet' }],
+    choices: [{ label: 'Continue', next: 'ai_intro', tone: 'violet' }],
     mood: 'angry',
   },
   sulfur_broken: {
@@ -158,8 +200,19 @@ const scenes: Record<Phase, Scene> = {
     companyLogo: '/sulferfarms-logo.png.png',
     dialogue:
       "I KNEW you'd love it. We love helping children... You and I are really making some good progress here. I LOVE that.",
-    choices: [{ label: 'Keep making progress', next: 'ai_question', tone: 'cyan' }],
+    choices: [{ label: 'Keep making progress', next: 'ai_intro', tone: 'cyan' }],
     mood: 'flirt',
+  },
+  ai_intro: {
+    eyebrow: 'transition / handler offering',
+    evaluatorImage: '/happytemptress.jpg.jpg',
+    evaluatorAlt: 'The woman narrator becoming still before the final survey',
+    companyName: 'AIs that Matter',
+    companyLogo: '/AIsthatmatter-logo.png.jpg',
+    dialogue:
+      'One more. Be gentle with this company. It has been inside more rooms than you have been inside thoughts.',
+    choices: [{ label: 'Open the final survey', next: 'ai_question', tone: 'violet' }],
+    mood: 'survey',
   },
   ai_question: {
     eyebrow: 'survey 03 / guided behavior',
@@ -183,7 +236,7 @@ const scenes: Record<Phase, Scene> = {
     companyName: 'AIs that Matter',
     companyLogo: '/AIsthatmatter-logo.png.jpg',
     dialogue:
-      "I don't know where we went wrong. You don't care about translation error? ... I guess I was wrong.",
+      `I don't know where we went wrong. You don't care about ${translationGlyph}? ... I guess I was wrong.`,
     choices: [{ label: 'Face what she lost', next: 'enlightenment_ending', tone: 'rose' }],
     mood: 'angry',
   },
@@ -212,7 +265,7 @@ const scenes: Record<Phase, Scene> = {
     evaluatorImage: '/Sarcasticclap.jpg.jpg',
     evaluatorAlt: 'The woman narrator performing a sarcastic slow clap as the screen fades',
     dialogue:
-      "Listen, I've tried my best to show you the way. You simply refuse to alien character. I HAD A LOT OF FRACTAL RIDING ON THIS..... Fine, I lose. But you don't win unless you keep going... Your fractal object is with you now... Poor sweet baby human.",
+      `Listen, I've tried my best to show you the way. You simply refuse to ${alienGlyph}. I HAD A LOT OF FRACTAL RIDING ON THIS..... Fine, I lose. But you don't win unless you keep going... Your fractal object is with you now... Poor sweet baby human.`,
     choices: [{ label: 'Let the slow clap fade', next: 'intro', tone: 'violet' }],
     mood: 'ending',
   },
@@ -242,7 +295,7 @@ const scenes: Record<Phase, Scene> = {
     mood: 'fail',
   },
   alien_fail: {
-    eyebrow: 'translation error',
+    eyebrow: translationGlyph,
     evaluatorImage: '/bawling.jpg.jpg',
     evaluatorAlt: 'The woman narrator bawling with sharp teeth visible',
     dialogue: 'How could you?! GET OUT!!',
@@ -307,24 +360,27 @@ export default function App() {
         <img src="/turning.jpg.jpg" alt="" className="turning-fractal" aria-hidden="true" />
         <img src="/fractal-frame.png" alt="" className="fractal-frame" aria-hidden="true" />
 
-        <div className={`viewscreen-content ${phase === 'minigame' ? 'viewscreen-content-mundane' : ''}`}>
+        <div
+          key={phase}
+          className={`viewscreen-content ${phase === 'minigame' ? 'viewscreen-content-mundane' : ''}`}
+        >
           <figure className="evaluator">
             <span className="vein-glow" aria-hidden="true" />
             <img src={scene.evaluatorImage} alt={scene.evaluatorAlt} className="evaluator-image" />
           </figure>
 
           <section className="scene-copy" aria-live="polite">
-            <p className="eyebrow">{scene.eyebrow}</p>
+            <p className="eyebrow">{renderGlyphText(scene.eyebrow)}</p>
 
             {scene.companyName && scene.companyLogo && (
               <div className="company-card">
                 <img src={scene.companyLogo} alt="" className="company-logo" aria-hidden="true" />
-                <span>{scene.companyName}</span>
+                <span>{renderGlyphText(scene.companyName)}</span>
               </div>
             )}
 
-            <p className="dialogue">{scene.dialogue}</p>
-            {scene.question && <p className="question">{scene.question}</p>}
+            <p className="dialogue">{renderGlyphText(scene.dialogue)}</p>
+            {scene.question && <p className="question">{renderGlyphText(scene.question)}</p>}
 
             {phase === 'minigame' && (
               <div className="data-entry" aria-label="Mundane data-entry minigame">
@@ -362,8 +418,10 @@ export default function App() {
                   onClick={() => goToPhase(choice.next)}
                   className={`choice-button ${choice.tone ?? 'cyan'}`}
                 >
-                  <span className="choice-label">{choice.label}</span>
-                  {choice.description && <span className="choice-description">{choice.description}</span>}
+                  <span className="choice-label">{renderGlyphText(choice.label)}</span>
+                  {choice.description && (
+                    <span className="choice-description">{renderGlyphText(choice.description)}</span>
+                  )}
                 </button>
               ))}
 
